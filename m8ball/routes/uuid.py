@@ -5,12 +5,12 @@ from flask import abort, request
 from flask.ext import restful
 from flask.ext.restful import reqparse
 from m8ball.util import str2bool, check_uuid
-from m8ball.util.pretendbackend import PretendBackend
+from m8ball.util.s3backend import S3Backend
 from m8ball.util.authball import AuthBall
 
 
 # Instantiate the pretend back-end k/v store.
-UUID_BACKEND = PretendBackend('m8ball/util/uuid_store.json')
+UUID_BACKEND = S3Backend()
 
 
 class Uuid(restful.Resource):
