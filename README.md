@@ -57,8 +57,11 @@ Default: _none_
 
 # Under the bonnet
 
+## S3Backend
+This is a simple abstraction layer for reading and writing keys from an S3 bucket. It extends `get` and `set` methods; in the latter case, note the `clobber` option above.
+
 ## PretendBackend
-Since we don't know what actual datastore(s) we're going to use, there is a make-believe datastore called _PretendBackend_. It accepts a JSON file as input (instantiation), and extends `get` and `set` methods just like a real key/value store. It does not write to disk.
+This can be used in the place of a "real" key/value backend. It accepts a JSON file as input (instantiation), and extends `get` and `set` methods just like a real k/v store. It does not write to disk.
 
 ## AuthBall
-Since we don't know what actual authentication mechanism(s) we're going to use, there is a primitive class called AuthBall that could - in principle - be used to abstract different auth possibilities. I'm not sure if this is something we need or want (yet).
+Since we don't know what actual authentication mechanism(s) we're going to use, this is a primitive class that could - in principle - be used to abstract different auth possibilities. I'm not sure if this is something we need or want (yet).
