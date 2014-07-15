@@ -9,10 +9,9 @@ from boto.exception import S3ResponseError
 class S3Backend(object):
     """This is a simple abstration layer to S3 (boto)."""
 
-    def __init__(self):
+    def __init__(self, buck):
         conn = S3Connection()
-        # TODO: Make the bucket name a runtime config.
-        self.bucket = conn.get_bucket('m8ballbucket')
+        self.bucket = conn.get_bucket(buck)
         self.k = Key(self.bucket)
 
     def get(self, key):
