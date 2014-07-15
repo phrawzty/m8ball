@@ -9,8 +9,11 @@ from m8ball.util.s3backend import S3Backend
 from m8ball.util.authball import AuthBall
 
 
-# Instantiate the pretend back-end k/v store.
-UUID_BACKEND = S3Backend()
+# TODO: Import the bucket names from ENV.
+# Instantiate the back-end.
+UUID_BACKEND = S3Backend('m8ballbucket')
+# Instantiate the authball.
+AUTHBALL = AuthBall({'type': 's3', 'bucket': 'm8ballapikeys'})
 
 
 class Uuid(restful.Resource):
@@ -43,12 +46,11 @@ class Uuid(restful.Resource):
         content = {}
 
         # Each PUT request needs to be authorised somehow.
-        authball = AuthBall()
         authenticated = False
 
         # Using an API key is one possibility, I guess.
         if args['api_key']:
-            if authball.apikey(args['api_key']):
+            if AUTHBALL.apikey(args['api_key']):
                 authenticated = True
         # There are other possibilities. This is totally up in the air.
         # Note that this is done per-request; there is currently no notion

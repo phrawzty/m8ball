@@ -1,6 +1,4 @@
 {
-    "api_keys": [
-        "008463ff-7834-4d7e-8e85-742f6fc3f6fd",
-        "ad43242e-dce1-4c31-a266-794d7ccee339"
-    ]
+    "008463ff-7834-4d7e-8e85-742f6fc3f6fd": "Client #1",
+    "ad43242e-dce1-4c31-a266-794d7ccee339": "Client #2"
 }
