@@ -1,11 +1,10 @@
 # Magic 8-Ball
-This is an API for the Magic 8-ball service.
+This is an API for the Magic 8-ball service. It is a Flask app built using the [Flask Restful](http://flask-restful.readthedocs.org/en/latest/) library; you will need to have that package (and its dependencies) available.
 
 ## WARNING WARNING WARNING
 This is just a mock-up and is primitive like the stone age. Expect all sorts of things to change.
 
-# Details, details
-This is a Flask app built using the [Flask Restful](http://flask-restful.readthedocs.org/en/latest/) library; you will need to have that package (and its dependencies) available.
+# Runtime configuration
 
 ## Debug
 To enable _debug_ mode just set the `M8_DEBUG` environment variable to `true`.
@@ -13,6 +12,12 @@ To enable _debug_ mode just set the `M8_DEBUG` environment variable to `true`.
 $ /usr/bin/env M8_DEBUG=true python ./runserver.py
 ```
 Don't do this in production; actually, don't run this in production at all (debug or no).
+
+## AWS
+AWS interaction is supplied by the Boto library, therefore credentials must be specified in a [Boto-appropriate manner](http://boto.readthedocs.org/en/latest/boto_config_tut.html#credentials) - environment variables are an easy choice:
+```
+$ /usr/bin/env AWS_ACCESS_KEY_ID=<key> AWS_SECRET_ACCESS_KEY=<secret> python ./runserver.py
+```
 
 # API
 There is only one useful endpoint: `/uuid/`
