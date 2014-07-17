@@ -9,9 +9,19 @@ from boto.exception import S3ResponseError
 class S3Backend(object):
     """This is a simple abstration layer to S3 (boto)."""
 
-    def __init__(self, buck):
-        conn = S3Connection()
-        self.bucket = conn.get_bucket(buck)
+    def __init__(self, **kwargs):
+        """Set up the S3 connection."""
+
+        # Basic sanity checking.
+        needs = ['access', 'secret', 'source']
+        for need in needs:
+            try:
+                assert kwargs[need]
+            except KeyError:
+                raise KeyError('Must specify %s for S3Backend' % need)
+
+        conn = S3Connection(kwargs['access'], kwargs['secret'])
+        self.bucket = conn.get_bucket(kwargs['source'])
         self.k = Key(self.bucket)
 
     def get(self, key):

@@ -2,6 +2,7 @@
 
 
 from flask import abort, request
+from flask import current_app as app
 from flask.ext import restful
 from flask.ext.restful import reqparse
 from m8ball.util import str2bool, check_uuid
@@ -9,14 +10,26 @@ from m8ball.util.s3backend import S3Backend
 from m8ball.util.authball import AuthBall
 
 
-# TODO: Import the bucket names from ENV.
-# Instantiate the back-end.
-UUID_BACKEND = S3Backend('m8ballbucket')
-# Instantiate the authball.
-AUTHBALL = AuthBall({'type': 's3', 'bucket': 'm8ballapikeys'})
-
-
 class Uuid(restful.Resource):
+    """This is the only useful endpoint, for now."""
+
+    def __init__(self):
+        """Set up the interaction components."""
+
+        aws = {
+            'access': app.config['AWS_ACCESS_KEY_ID'],
+            'secret': app.config['AWS_SECRET_ACCESS_KEY'],
+        }
+
+        # Instantiate the back-end.
+        uuid_obj = aws.copy()
+        uuid_obj.update({'source': app.config['UUID_SOURCE']})
+        self.uuid_backend = S3Backend(**uuid_obj)
+
+        # Instantiate the authball.
+        auth_obj = aws.copy()
+        auth_obj.update({'type': 's3', 'source': app.config['AUTH_SOURCE']})
+        self.authball = AuthBall(**auth_obj)
 
     def get(self, uuid_list):
         """Get one or more UUIDs."""
@@ -29,7 +42,7 @@ class Uuid(restful.Resource):
         uuids = uuid_list.split(',')
 
         for uuid in uuids:
-            lookup_uuid = UUID_BACKEND.get(uuid)
+            lookup_uuid = self.uuid_backend.get(uuid)
             if check_uuid(uuid) and lookup_uuid:
                 content[uuid] = lookup_uuid
             elif str2bool(args['empty']):
@@ -50,7 +63,7 @@ class Uuid(restful.Resource):
 
         # Using an API key is one possibility, I guess.
         if args['api_key']:
-            if AUTHBALL.apikey(args['api_key']):
+            if self.authball.apikey(args['api_key']):
                 authenticated = True
         # There are other possibilities. This is totally up in the air.
         # Note that this is done per-request; there is currently no notion
@@ -73,7 +86,7 @@ class Uuid(restful.Resource):
         data = request.values.get('data')
 
         # Ok, try to set the UUID and data pair.
-        if UUID_BACKEND.set(uuid_list, data, str2bool(args['clobber'])):
+        if self.uuid_backend.set(uuid_list, data, str2bool(args['clobber'])):
             content[uuid_list] = data
 
         return content
