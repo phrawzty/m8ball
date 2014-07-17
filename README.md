@@ -5,19 +5,30 @@ This is an API for the Magic 8-ball service. It is a Flask app built using the [
 This is just a mock-up and is primitive like the stone age. Expect all sorts of things to change.
 
 # Runtime configuration
+All runtime configuration is set via environment variables. These variables must be prefixed with `M8_`.
 
 ## Debug
-To enable _debug_ mode just set the `M8_DEBUG` environment variable to `true`.
+To enable _debug_ mode just set the `M8_DEBUG` environment variable to `true`, for example:
 ```
 $ /usr/bin/env M8_DEBUG=true python ./runserver.py
 ```
-Don't do this in production; actually, don't run this in production at all (debug or no).
+Don't do this in production.
 
 ## AWS
-AWS interaction is supplied by the Boto library, therefore credentials must be specified in a [Boto-appropriate manner](http://boto.readthedocs.org/en/latest/boto_config_tut.html#credentials) - environment variables are an easy choice:
+AWS interaction is supplied by the Boto library, therefore credentials must be specified in a [Boto-appropriate manner](http://boto.readthedocs.org/en/latest/boto_config_tut.html#credentials).
 ```
-$ /usr/bin/env AWS_ACCESS_KEY_ID=<key> AWS_SECRET_ACCESS_KEY=<secret> python ./runserver.py
+M8_AWS_ACCESS_KEY_ID=<key>
+M8_AWS_SECRET_ACCESS_KEY=<secret>
 ```
+These are only required if AWS is actually being used.
+
+## Data stores (back-end)
+Sources for the UUID and API key store must also be specified.
+```
+M8_UUID_SOURCE=<bucket>
+M8_AUTH_SOURCE=<bucket>
+```
+In the case of AWS these would be the respective bucket names. For the pretend backend (see below) they would be files.
 
 # API
 There is only one useful endpoint: `/uuid/`
@@ -66,7 +77,7 @@ Default: _none_
 This is a simple abstraction layer for reading and writing keys from an S3 bucket. It extends `get` and `set` methods; in the latter case, note the `clobber` option above.
 
 ## PretendBackend
-This can be used in the place of a "real" key/value backend. It accepts a JSON file as input (instantiation), and extends `get` and `set` methods just like a real k/v store. It does not write to disk.
+This can be used in the place of a "real" key/value backend (useful for off-line development). It accepts a JSON file as input (instantiation), and extends `get` and `set` methods just like a real k/v store. It does not write to disk.
 
 ## AuthBall
-Since we don't know what actual authentication mechanism(s) we're going to use, this is a primitive class that could - in principle - be used to abstract different auth possibilities. I'm not sure if this is something we need or want (yet).
+There are a number of potential options for authentication. This class aims to act as an abstraction layer to those options. Currently the only implemented mechanism is a simple API key. I'd like to add a PKI mechanism down the line as well.
