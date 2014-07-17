@@ -13,37 +13,30 @@ from m8ball.util.s3backend import S3Backend
 class AuthBall(object):
     """This is experimental and may be eliminated entirely."""
 
-    def __init__(self, back):
+    def __init__(self, **kwargs):
         """Init the AuthBall!"""
 
-        self.backend = False
-
-        # Sanity checking.
+        # Basic sanity checking.
         backs = ['pretend', 's3']
 
         try:
-            assert back['type']
-            assert back['type'] in backs
+            assert kwargs['type']
+            assert kwargs['type'] in backs
         except KeyError:
             raise KeyError('Must specify "type" of back-end.')
         except AssertionError:
             raise ValueError('Back-end type must be one of %s ' % types)
 
-        if back['type'] == 'pretend':
-            try:
-                assert back['file']
-            except KeyError:
-                raise KeyError('Pretend back-end requires "file" source.')
+        try:
+            assert kwargs['source']
+        except KeyError:
+            raise KeyError('Must specify "source" for back-end.')
 
-            self.backend = PretendBackend(back['file'])
+        if kwargs['type'] == 'pretend':
+            self.backend = PretendBackend(kwargs['source'])
 
-        if back['type'] == 's3':
-            try:
-                assert back['bucket']
-            except KeyError:
-                raise KeyError('S3 requires a "bucket" source.')
-
-            self.backend = S3Backend(back['bucket'])
+        if kwargs['type'] == 's3':
+            self.backend = S3Backend(**kwargs)
 
     def apikey(self, api_key):
         """Simple key passed as string in plaintext."""
