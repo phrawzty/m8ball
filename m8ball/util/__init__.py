@@ -2,6 +2,7 @@
 
 
 import re
+from os import environ
 
 
 def str2bool(string):
@@ -22,3 +23,17 @@ def check_uuid(string):
     )
 
     return re_uuid.match(string)
+
+
+def parse_env():
+    """Extract potential config options from env."""
+
+    m8_env = {}
+
+    # All runtime args must be prefixed my 'M8_'.
+    for key in environ:
+        if key.startswith('M8_'):
+            # Drop the prefix for internal assignment.
+            m8_env[key.split('M8_')[1]] = environ[key]
+
+    return m8_env
