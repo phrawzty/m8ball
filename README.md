@@ -49,6 +49,11 @@ One UUID can be PUT at a time:
 
 It is necessary to authenticate for PUT requests. Currently the only auth mechanism is an API key (see `api_key` below).
 
+PUT is only useful if there's a payload. That payload should be contained in `data`.
+```
+$ curl -XPUT 'http://<serv>/uuid/<uuid>' -d 'data=<payload>'
+```
+
 ### Options
 There are some options that can be passed to the `/uuid/` endpoint. These options can either be specified in the URL directly, or as form encoded elements.
 ```
