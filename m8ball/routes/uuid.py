@@ -19,6 +19,8 @@ class Uuid(restful.Resource):
         aws = {
             'access': app.config['AWS_ACCESS_KEY_ID'],
             'secret': app.config['AWS_SECRET_ACCESS_KEY'],
+            'port': app.config['AWS_PORT'] if 'AWS_PORT' in app.config else False,
+            'host': app.config['AWS_HOST'] if 'AWS_PORT' in app.config else False
         }
 
         # Instantiate the back-end.

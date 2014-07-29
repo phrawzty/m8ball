@@ -1,7 +1,7 @@
 """Insert docstring here."""
 
 
-from boto.s3.connection import S3Connection
+from boto.s3.connection import S3Connection, OrdinaryCallingFormat
 from boto.s3.key import Key
 from boto.exception import S3ResponseError
 
@@ -20,7 +20,14 @@ class S3Backend(object):
             except KeyError:
                 raise KeyError('Must specify %s for S3Backend' % need)
 
-        conn = S3Connection(kwargs['access'], kwargs['secret'])
+        # We might be using a mock S3.
+        if kwargs['port'] and kwargs['host']:
+            conn = S3Connection(kwargs['access'], kwargs['secret'],
+                is_secure=False, calling_format=OrdinaryCallingFormat(),
+                port=int(kwargs['port']), host=kwargs['host'])
+        else:
+            conn = S3Connection(kwargs['access'], kwargs['secret'])
+
         self.bucket = conn.get_bucket(kwargs['source'])
         self.k = Key(self.bucket)
 

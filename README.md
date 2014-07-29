@@ -22,6 +22,13 @@ M8_AWS_SECRET_ACCESS_KEY=<secret>
 ```
 These are only required if AWS is actually being used.
 
+### Mock AWS
+For a mock or fake S3 back-end (in the case of integration tests or offline development, for example), just specify the host and port for the mock service.
+```
+M8_AWS_HOST=localhost
+M8_AWS_PORT=10001
+```
+
 ## Data stores (back-end)
 Sources for the UUID and API key store must also be specified.
 ```
